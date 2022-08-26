@@ -24,6 +24,21 @@ class Product(models.Model):
         return self.title
 
 
+class PostImages(models.Model):
+    title = models.CharField(max_length=150, blank=True)
+    image = models.ImageField(upload_to='images/')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    
+    @staticmethod
+    def generate_name():
+        from random import randint
+        return 'image' + str(randint(100_000,999_999))
+    
+    def save(self, *args, **kwargs):
+        self.title = self.generate_name()
+        return super(PostImages, self).save(*args, **kwargs)
+
+
 class Comment(models.Model):
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='comments', on_delete=models.CASCADE)
@@ -49,16 +64,3 @@ class Favorites(models.Model):
     class Meta:
         unique_together = ['product', 'user']
 
-# class PostImages(models.Model):
-#     title = models.CharField(max_length=150, blank=True)
-#     image = models.ImageField(upload_to='images/')
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    
-#     @staticmethod
-#     def generate_name():
-#         from random import randint
-#         return 'image' + str(randint(100_000,999_999))
-    
-#     def save(self, *args, **kwargs):
-#         self.title = self.generate_name()
-#         return super(PostImages, self).save(*args, **kwargs)
