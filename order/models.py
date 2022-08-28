@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from account.models import UserManager
 from product.models import Product
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 User = get_user_model()
@@ -26,3 +28,8 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOISES)
     cteated_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+
+
+
+    
+

@@ -16,17 +16,29 @@ class StandartPagination(PageNumberPagination):
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
-    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
     filterset_fields = (DjangoFilterBackend, SearchFilter)
-    filterset_fields = ('category',)
+    filterset_fields = ('category','year', 'steering_wheel', 'price')
     search_fields = ('title')
     pagination_class = StandartPagination
-
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
         if self.action == 'list':
             return serializers.ProductListSerializer
-        return serializers.PrductDetailSerializer
+        else:
+            return serializers.ProductDetailSerializer
+
+    
+    
+    def get_permissions(self):
+        if self.action in ('create', 'add_to_liked', 'remove_from_liked', 'favorite_action'):
+            return [permissions.IsAuthenticated()]
+        elif self.action in ('update', 'partial_update', 'destroy', 'get_likes'):
+            return [permissions.IsAuthenticated(), IsAuthor()]
+        else:
+            return [permissions.AllowAny(),]
     
     @action(['GET', 'POST'], detail=True)
     def reviews(self, request, pk=None):

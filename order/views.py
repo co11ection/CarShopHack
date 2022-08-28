@@ -1,6 +1,8 @@
 from rest_framework import generics, permissions, response, views
 from . import serializers
 from .models import Order
+from rest_framework.views import APIView
+from rest_framework.response import Response
 # Create your views here.
 
 class CreateOrderView(generics.CreateAPIView):
@@ -28,3 +30,5 @@ class UpdateOrderStatusView(views.APIView):
         order.save()
         serializer = serializers.OrderSerializer(order).data
         return response.Response(serializer, status=206)
+
+

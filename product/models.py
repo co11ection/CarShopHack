@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='products')
     title= models.CharField(max_length=100)
     year = models.CharField(max_length=30)
     color = models.CharField(max_length=100)
@@ -14,29 +15,13 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,related_name='products')
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='products')
-    image = models.ImageField(upload_to='images', null = True, blank =True)
+    images = models.ImageField(upload_to='images/', null = True, blank =True,)
 
     class Meta:
         ordering = ['title']
 
     def __str__(self) -> str:
         return self.title
-
-
-class PostImages(models.Model):
-    title = models.CharField(max_length=150, blank=True)
-    image = models.ImageField(upload_to='images/')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    
-    @staticmethod
-    def generate_name():
-        from random import randint
-        return 'image' + str(randint(100_000,999_999))
-    
-    def save(self, *args, **kwargs):
-        self.title = self.generate_name()
-        return super(PostImages, self).save(*args, **kwargs)
 
 
 class Comment(models.Model):

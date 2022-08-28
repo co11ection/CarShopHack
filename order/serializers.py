@@ -38,3 +38,4 @@ class OrderSerializer(serializers.ModelSerializer):
         repr = super().to_representation(instance)
         repr['products']=OrderItemSerializer(instance.items.all(), many=True).data
         return repr
+
